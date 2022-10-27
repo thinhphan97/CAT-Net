@@ -41,7 +41,7 @@ from lib.core.function import train, validate
 from lib.utils.modelsummary import get_model_summary
 from lib.utils.utils import create_logger, FullModel, get_rank
 
-from Splicing.data.data_core import SplicingDataset as splicing_dataset
+from Splicing.data.data_train import TrainData
 
 
 def parse_args():
@@ -100,7 +100,7 @@ def main():
     crop_size = (config.TRAIN.IMAGE_SIZE[1], config.TRAIN.IMAGE_SIZE[0])
     if config.DATASET.DATASET == 'splicing_dataset':
         ## CHOOSE ##
-        train_dataset = splicing_dataset(crop_size=crop_size, grid_crop=True, blocks=('RGB', 'DCTvol', 'qtable'), mode='train', DCT_channels=1, read_from_jpeg=True, class_weight=[0.5, 2.5])  # full model
+        train_dataset = TrainData(crop_size=crop_size, grid_crop=True, blocks=('RGB', 'DCTvol', 'qtable'), mode='train', DCT_channels=1, read_from_jpeg=True, class_weight=[0.5, 2.5], mode='train')  # full model
         # train_dataset = splicing_dataset(crop_size=crop_size, grid_crop=True, blocks=('DCTvol', 'qtable'), mode='train', DCT_channels=1, read_from_jpeg=True, class_weight=[0.5, 2.5])  # only DCT stream
         logger.info(train_dataset.get_info())
     else:
@@ -115,7 +115,7 @@ def main():
 
     # validation
     ## CHOOSE ##
-    valid_dataset = splicing_dataset(crop_size=None, grid_crop=True, blocks=('RGB', 'DCTvol', 'qtable'), mode="valid", DCT_channels=1, read_from_jpeg=True)  # full model
+    valid_dataset = TrainData(crop_size=None, grid_crop=True, blocks=('RGB', 'DCTvol', 'qtable'), mode="valid", DCT_channels=1, read_from_jpeg=True, mode='val')  # full model
     # valid_dataset = splicing_dataset(crop_size=None, grid_crop=True, blocks=('DCTvol', 'qtable'), mode="valid", DCT_channels=1, read_from_jpeg=True)  # only DCT stream
 
     validloader = torch.utils.data.DataLoader(
