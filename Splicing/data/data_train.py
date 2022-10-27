@@ -85,6 +85,7 @@ class TrainData(AbstractDataset):
             else:
                for content in contents[:val_num]:
                    inpainting_names.append(join(inpainting_path, content.strip()))
+                   
         if mode == "train":
             self.image_names = [authentic_names, splice_names, copymove_names, inpainting_names]
         else:
@@ -93,6 +94,7 @@ class TrainData(AbstractDataset):
         self.train_num = train_num
         self.train_ratio = train_ratio
         self.mode = mode
+        
         if class_weight is None:
             self.class_weights = torch.FloatTensor([1.0, 1.0])
         else:
@@ -196,8 +198,10 @@ class TrainData(AbstractDataset):
         self.image_names = [random.shuffle(image_name) for image_name in self.image_names]
     
     def __len__(self):
-        
-        return sum([len(image_name) for image_name in self.image_names])
+        if self.mode == "train":
+            return sum([len(image_name) for image_name in self.image_names])
+        else:
+            return len(self.image_names)
         
     def get_info(self):
         s = ""
