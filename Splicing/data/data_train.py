@@ -62,7 +62,7 @@ class TrainData(AbstractDataset):
 
         # copymove
         copymove_names = []
-        copymove_path = join(self._root_path, 'copymove/copymove')
+        copymove_path = join(self._root_path, 'removal/removal')
 
         with open(join(copymove_path, 'fake.txt')) as f:
             contents = f.readlines()
