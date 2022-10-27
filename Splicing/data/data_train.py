@@ -68,10 +68,10 @@ class TrainData(AbstractDataset):
             contents = f.readlines()
             if mode == "train":
                 for content in contents[val_num:]:
-                    copymove_names.append(join(copymove_path, content.strip()))
+                    copymove_names.append(join(copymove_path, content.strip().replace(".png",".jpg")))
             else:
                 for content in contents[:val_num]:
-                    copymove_names.append(join(copymove_path, content.strip()))
+                    copymove_names.append(join(copymove_path, content.strip().replace(".png",".jpg")))
                     
         # inpainting
         inpainting_names = []
@@ -140,19 +140,17 @@ class TrainData(AbstractDataset):
 
         # splice
         elif cls == 1:
-            if '.jpg' in image_name:
-                mask_name = image_name.replace('fake', 'mask').replace('.jpg', '.png')
-            else:
-                mask_name = image_name.replace('fake', 'mask').replace('.tif', '.png')
-
+            # if '.jpg' in image_name:
+            mask_name = image_name.replace('fake', 'mask').replace('.jpg', '.png')
+            # else:
+            #     mask_name = image_name.replace('fake', 'mask').replace('.tif', '.png')
             mask = imageio.imread(mask_name)
             mask = np.asarray(mask)
 
         # copymove
         elif cls == 2:
-            mask = imageio.imread(image_name.replace('fake', 'mask'))
+            mask = imageio.imread(image_name.replace('fake', 'mask').replace('.jpg', '.png'))
             mask = np.asarray(mask)
-
         # inpainting
         elif cls == 3:
             mask = imageio.imread(image_name.replace('fake', 'mask').replace('.jpg', '.png'))
