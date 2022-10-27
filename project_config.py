@@ -6,7 +6,7 @@
 from pathlib import Path
 
 project_root = Path(__file__).parent
-dataset_root = Path("../input")
+dataset_root = Path("/kaggle/input")
 dataset_paths = {
     'COCO':dataset_root / "psccnet-data", 
     'SAVE_PRED': project_root / "output_pred"
