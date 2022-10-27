@@ -1,7 +1,7 @@
 from os.path import join
 from random import randrange
 
-import imageio
+import imageio.v2 as imageio
 import torch
 import numpy as np
 import project_config
@@ -9,7 +9,7 @@ from Splicing.data.AbstractDataset import AbstractDataset
 import random
 
 class TrainData(AbstractDataset):
-    def __init__(self, crop_size, grid_crop, blocks: list, DCT_channels: int, read_from_jpeg=False, class_weight=None, mode ="train", val_num=300, train_ratio=[0.25, 0.25, 0.25, 0.25], train_num = 250000 ):
+    def __init__(self, crop_size, grid_crop, blocks: list, DCT_channels: int, read_from_jpeg=False, class_weight=None, mode ="train", val_num=300, train_ratio=[0.25, 0.25, 0.25, 0.25], train_num = 100000 ):
         """
         :param crop_size: (H,W) or None
         :param blocks:
@@ -43,7 +43,7 @@ class TrainData(AbstractDataset):
                 for content in contents[val_num:]:
                     splice_names.append(join(splice_path, content.strip()))
             else:
-               for content in contents[:val_num]:
+                for content in contents[:val_num]:
                     splice_names.append(join(splice_path, content.strip())) 
                 
         splice_randmask = []
@@ -55,7 +55,7 @@ class TrainData(AbstractDataset):
                 for content in contents[val_num:]:
                     splice_randmask.append(join(splice_randmask_path, content.strip()))
             else:
-               for content in contents[:val_num]:
+                for content in contents[:val_num]:
                     splice_randmask.append(join(splice_randmask_path, content.strip()))
                     
         splice_names = splice_names + splice_randmask
@@ -70,7 +70,7 @@ class TrainData(AbstractDataset):
                 for content in contents[val_num:]:
                     copymove_names.append(join(copymove_path, content.strip()))
             else:
-               for content in contents[:val_num]:
+                for content in contents[:val_num]:
                     copymove_names.append(join(copymove_path, content.strip()))
                     
         # inpainting
@@ -83,14 +83,17 @@ class TrainData(AbstractDataset):
                 for content in contents[val_num:]:
                     inpainting_names.append(join(inpainting_path, content.strip()))
             else:
-               for content in contents[:val_num]:
-                   inpainting_names.append(join(inpainting_path, content.strip()))
+                for content in contents[:val_num]:
+                    inpainting_names.append(join(inpainting_path, content.strip()))
                    
         if mode == "train":
             self.image_names = [authentic_names, splice_names, copymove_names, inpainting_names]
+#             self.image_names = authentic_names + splice_names + copymove_names + inpainting_names
         else:
             self.image_names = authentic_names + splice_names + copymove_names + inpainting_names
-            
+        
+        
+        
         self.train_num = train_num
         self.train_ratio = train_ratio
         self.mode = mode
@@ -119,7 +122,7 @@ class TrainData(AbstractDataset):
             
             # get images in that class
             one_cls_names = self.image_names[cls]
-
+            
             index = randrange(0, len(one_cls_names))
 
             # read the chosen image
@@ -194,23 +197,12 @@ class TrainData(AbstractDataset):
         
         return Y_qtable
     
-    def shuffle(self):
-        self.image_names = [random.shuffle(image_name) for image_name in self.image_names]
-    
     def __len__(self):
         if self.mode == "train":
-            return sum([len(image_name) for image_name in self.image_names])
+            return self.train_num
         else:
             return len(self.image_names)
         
-    def get_info(self):
-        s = ""
-        for ds in self.dataset_list:
-            s += (str(ds)+'('+str(len(ds))+') ')
-        s += '\n'
-        s += f"crop_size={self.crop_size}, grid_crop={self.grid_crip}, blocks={self.blocks}, mode={self.mode}, read_from_jpeg={self.read_from_jpeg}, class_weight={self.class_weights}\n"
-        return s
-    
     def __getitem__(self, index):
         
         return self.get_tamp(index)

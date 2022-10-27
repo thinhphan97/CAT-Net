@@ -161,7 +161,7 @@ class AbstractDataset(ABC):
             if 'DCTcoef' in self._blocks or 'DCTvol' in self._blocks or 'rawRGB' in self._blocks:
                 for i in range(self.DCT_channels):
                     DCT_coef[i] = DCT_coef[i][s_r:s_r+crop_size[0], s_c:s_c+crop_size[1]]
-                t_DCT_coef = torch.tensor(DCT_coef, dtype=torch.float).to(self.device)  # final (but used below)
+                t_DCT_coef = torch.tensor(np.array(DCT_coef), dtype=torch.float).to(self.device)  # final (but used below)
 
         # handle 'RGB'
         if 'RGB' in self._blocks:
