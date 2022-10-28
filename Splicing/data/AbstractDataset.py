@@ -197,9 +197,9 @@ class AbstractDataset(ABC):
         tensor = torch.cat(img_block)
 
         if 'qtable' not in self._blocks:
-            return tensor, torch.tensor(mask, dtype=torch.long), 0
+            return tensor, torch.tensor(np.array(mask), dtype=torch.long), 0
         else:
-            return tensor, torch.tensor(mask, dtype=torch.long), torch.tensor(qtables[:self.DCT_channels], dtype=torch.float)
+            return tensor, torch.tensor(np.array(mask), dtype=torch.long), torch.tensor(np.array(qtables[:self.DCT_channels]), dtype=torch.float)
 
     @abstractmethod
     def get_tamp(self, index):
