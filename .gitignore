@@ -6,3 +6,5 @@ log/
 *.log
 output_pred/
 dataset/
+pretrained_models/
+pretrain.zip

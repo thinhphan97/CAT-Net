@@ -13,8 +13,10 @@ DATASET:
   NUM_CLASSES: 2
 MODEL:
   NAME: network_CAT
-  PRETRAINED_RGB: 'pretrained_models/hrnetv2_w48_imagenet_pretrained.pth'
-  PRETRAINED_DCT: 'pretrained_models/DCT_djpeg.pth.tar'
+  # PRETRAINED_RGB: 'pretrained_models/hrnetv2_w48_imagenet_pretrained.pth'
+  # PRETRAINED_DCT: 'pretrained_models/DCT_djpeg.pth.tar'
+  PRETRAINED_RGB: '/kaggle/input/pretrained-cat-net/pretrained_models/hrnetv2_w48_imagenet_pretrained.pth'
+  PRETRAINED_DCT: '/kaggle/input/pretrained-cat-net/pretrained_models/DCT_djpeg.pth.tar'
   EXTRA:
     FINAL_CONV_KERNEL: 1
     STAGE1:
