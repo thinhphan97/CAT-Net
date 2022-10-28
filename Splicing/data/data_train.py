@@ -1,5 +1,6 @@
 from os.path import join
 from random import randrange
+from tkinter import image_names
 
 import imageio.v2 as imageio
 import torch
@@ -91,7 +92,11 @@ class TrainData(AbstractDataset):
 #             self.image_names = authentic_names + splice_names + copymove_names + inpainting_names
         else:
             self.image_names = authentic_names + splice_names + copymove_names + inpainting_names
-        
+            authentic_cls = [0] * len(authentic_names)
+            splice_cls = [1] * len(splice_names)
+            copymove_cls = [2] * len(copymove_names)
+            inpainting_cls = [3] * len(inpainting_names)
+            self.image_class = authentic_cls + splice_cls + copymove_cls + inpainting_cls
         
         
         self.train_num = train_num
@@ -129,6 +134,7 @@ class TrainData(AbstractDataset):
             image_name = one_cls_names[index]
         else:
             image_name = self.image_names[index]
+            cls = self.image_class[index]
             
         image = imageio.imread(image_name)
 
@@ -197,10 +203,15 @@ class TrainData(AbstractDataset):
     
     def __len__(self):
         if self.mode == "train":
-            return self.train_num
+            return sum([len(item) for item in self.image_names])
         else:
             return len(self.image_names)
         
     def __getitem__(self, index):
         
         return self.get_tamp(index)
+    
+    def shuffle(self):
+        
+        for image_names in self.image_names:
+            random.shuffle(image_names)
