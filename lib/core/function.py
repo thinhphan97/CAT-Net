@@ -52,10 +52,12 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr, num_iters,
 
     for i_iter, (images, DCT_vol, labels, qtable) in enumerate(trainloader):
         # images, labels, _, _ = batch
-        images = torch.cat((images,DCT_vol), dim=1).cuda()
+        # images = torch.cat((images,DCT_vol), dim=1).cuda()
+        images = images.cuda()
+        DCT_vol = DCT_vol.cuda()
         labels = labels.long().cuda()
 
-        losses, _ = model(images, labels, qtable)  # _ : output of the model (see utils.py)
+        losses, _ = model(images, DCT_vol, labels, qtable)  # _ : output of the model (see utils.py)
         loss = losses.mean()
 
         reduced_loss = reduce_tensor(loss)

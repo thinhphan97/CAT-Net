@@ -462,8 +462,8 @@ class CAT_Net(nn.Module):
 
         return nn.Sequential(*modules), num_inchannels
 
-    def forward(self, x, qtable):
-        RGB, DCTcoef = x[:, :3, :, :], x[:, 3:, :, :]
+    def forward(self, RGB, DCTcoef, qtable):
+        # RGB, DCTcoef = x[:, :3, :, :], x[:, 3:, :, :]
 
         # RGB Stream
         x = self.conv1(RGB)

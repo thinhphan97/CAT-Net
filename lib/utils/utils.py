@@ -30,8 +30,8 @@ class FullModel(nn.Module):
     self.model = model
     self.loss = loss
 
-  def forward(self, inputs, labels, qtable):
-    outputs = self.model(inputs, qtable)
+  def forward(self, images, DCT_vol, labels, qtable):
+    outputs = self.model(images, DCT_vol, qtable)
     loss = self.loss(outputs, labels)
     return torch.unsqueeze(loss,0), outputs
 
