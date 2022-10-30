@@ -9,24 +9,19 @@ mjkwon2021@gmail.com
 July 14, 2020
 """
 
+import gc
 import logging
 import os
 import time
 
 import numpy as np
-from tqdm import tqdm
-import os
-
 import torch
-import torch.nn as nn
 import torch.distributed as dist
+import torch.nn as nn
+from lib.utils.utils import (AverageMeter, adjust_learning_rate,
+                             get_confusion_matrix, get_rank, get_world_size)
 from torch.nn import functional as F
-
-from lib.utils.utils import AverageMeter
-from lib.utils.utils import get_confusion_matrix
-from lib.utils.utils import adjust_learning_rate
-from lib.utils.utils import get_world_size, get_rank
-
+from tqdm import tqdm
 
 
 def reduce_tensor(inp):
@@ -55,9 +50,9 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr, num_iters,
     global_steps = writer_dict['train_global_steps']
     world_size = get_world_size()
 
-    for i_iter, (images, labels, qtable) in enumerate(trainloader):
+    for i_iter, (images, DCT_vol, labels, qtable) in enumerate(trainloader):
         # images, labels, _, _ = batch
-        images = images.cuda()
+        images = torch.cat((images,DCT_vol), dim=1).cuda()
         labels = labels.long().cuda()
 
         losses, _ = model(images, labels, qtable)  # _ : output of the model (see utils.py)

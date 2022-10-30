@@ -12,6 +12,7 @@ import torch_dct as dct
 import torch
 import random
 import cv2
+import gc
 
 
 class AbstractDataset(ABC):
@@ -161,17 +162,17 @@ class AbstractDataset(ABC):
             if 'DCTcoef' in self._blocks or 'DCTvol' in self._blocks or 'rawRGB' in self._blocks:
                 for i in range(self.DCT_channels):
                     DCT_coef[i] = DCT_coef[i][s_r:s_r+crop_size[0], s_c:s_c+crop_size[1]]
-                t_DCT_coef = torch.tensor(np.array(DCT_coef), dtype=torch.float).to(self.device)  # final (but used below)
+                t_DCT_coef = torch.tensor(DCT_coef, dtype=torch.float) # final (but used below)
 
         # handle 'RGB'
         if 'RGB' in self._blocks:
             t_RGB = (torch.tensor(img_RGB.transpose(2,0,1), dtype=torch.float)-127.5)/127.5  # final
-            t_RGB = t_RGB.to(self.device)
+            # t_RGB = t_RGB
             
         # handle 'DCTvol'
         if 'DCTvol' in self._blocks:
             T = 20
-            t_DCT_vol = torch.zeros(size=(T+1, t_DCT_coef.shape[1], t_DCT_coef.shape[2])).to(self.device)
+            t_DCT_vol = torch.zeros(size=(T+1, t_DCT_coef.shape[1], t_DCT_coef.shape[2]))
             t_DCT_vol[0] += (t_DCT_coef == 0).float().squeeze()
             for i in range(1, T):
                 t_DCT_vol[i] += (t_DCT_coef == i).float().squeeze()
@@ -195,14 +196,15 @@ class AbstractDataset(ABC):
 
         # final tensor
         tensor = torch.cat(img_block)
-
+        gc.collect()
+        torch.empty()
         if 'qtable' not in self._blocks:
-            return tensor, torch.tensor(np.array(mask), dtype=torch.long), 0
+            return tensor, torch.tensor(mask, dtype=torch.long), 0
         else:
-            return tensor, torch.tensor(np.array(mask), dtype=torch.long), torch.tensor(np.array(qtables[:self.DCT_channels]), dtype=torch.float)
+            return tensor, torch.tensor(mask, dtype=torch.long), torch.tensor(qtables[:self.DCT_channels], dtype=torch.float)
 
-    @abstractmethod
-    def get_tamp(self, index):
-        pass
+    # @abstractmethod
+    # def get_tamp(self, index):
+    #     pass
 
 
